@@ -4,16 +4,20 @@ import React, { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 // Импортируем элементы React Native.
 import {
-  ActivityIndicator,
-  Alert,
-  Image,
-  ImageBackground,
-  SafeAreaView,
-  Share,
-  Text,
-  TouchableOpacity,
-  View,
-  Platform,
+  ActivityIndicator, //компонент React Native, который отображает индикатор загрузки в виде вращающегося кружка.
+    //используется во время загрузки цитаты из API, чтобы пользователь видел, что приложение выполняет запрос и ожидает ответ от сервера.
+    Alert,//Используется для уведомления пользователя об ошибках или важных событиях.
+    //Например, если пользователь пытается поделиться цитатой до её загрузки, появляется соответствующее сообщение
+    Image, //для отображения изображений
+    ImageBackground,//для отображения изображения в качестве фона.(задний)
+    SafeAreaView,//специальный контейнер React Native, который учитывает особенности экранов мобильных устройств (вырезы камеры, Dynamic Island)
+    Share,//встроенный модуль React Native для открытия системного меню «Поделиться». 
+    //Позволяет отправлять цитату через мессенджеры, электронную почту, сообщения и другие приложения.
+    Text,//для отображения текста на экране.Используется для вывода заголовка, текста цитаты, имени автора и текста кнопок.
+    TouchableOpacity, //компонент React Native, реализующий кнопку. 
+    //Позволяет пользователю взаимодействовать с интерфейсом через нажатия.спользуется для кнопок «Новая цитата» и «Поделиться».
+    View,//базовый контейнер React Native, аналог тега в HTML. Используется для группировки и размещения элементов интерфейса на экране.
+    Platform,//модуль React Native для определения платформы, на которой запущено приложение. Позволяет узнать, работает программа в браузере (web), на Android или на iOS,
 } from 'react-native';
 
 // Импортируем стили.
@@ -136,21 +140,34 @@ export default function App() {
   }, []);
 
   // Что показывать вместо текста.
-  const chto_pokazat_citatu =
-    zagruzka
-      ? 'Загрузка...'
-      : '"' + tekst_citati + '"';
+    let chto_pokazat_citatu;
+
+    if (zagruzka) {
+        chto_pokazat_citatu = 'Загрузка...';
+    } else {
+        chto_pokazat_citatu = '"' + tekst_citati + '"';
+    }
 
   // Что показывать вместо автора.
-  const chto_pokazat_avtora =
-    zagruzka
-      ? ''
-      : '— ' + avtor_citati;
+    let chto_pokazat_avtora;
+
+    if (zagruzka) {
+        chto_pokazat_avtora = '';
+    } else {
+        chto_pokazat_avtora = '— ' + avtor_citati;
+    }
 
   // Берем текущую собаку.
   const tekushaya_fotografiya_sobaki =
     fotografiiSobak['dog' + nomer_foto_sobaki];
 
+    let indikator_zagruzki = null;
+
+    if (zagruzka) {
+        indikator_zagruzki = (
+            <ActivityIndicator style={styles.loader} />
+        );
+    }
   // Возвращаем интерфейс.
   return (
 
@@ -181,17 +198,15 @@ export default function App() {
             </Text>
 
             <Text style={styles.quoteAuthor}>
-              {chto_pokazat_avtora}
+                {chto_pokazat_avtora}
             </Text>
 
-            {zagruzka ? (
-              <ActivityIndicator style={styles.loader} />
-            ) : null}
+            {indikator_zagruzki}
 
             <TouchableOpacity
-              style={styles.button}
-              activeOpacity={0.8}
-              onPress={zagruzit_novuyu_citatu}
+                style={styles.button}
+                activeOpacity={0.8}
+                onPress={zagruzit_novuyu_citatu}
             >
 
               <Text style={styles.buttonText}>
